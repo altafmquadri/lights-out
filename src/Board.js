@@ -39,8 +39,6 @@ class Board extends Component {
     this.state = {
       board: this.createBoard()
     }
-
-    // TODO: set initial state
   }
 
   /** create a board nrows high/ncols wide, each cell randomly lit or unlit */
@@ -63,10 +61,11 @@ class Board extends Component {
 
   /** handle changing a cell: update board & determine if winner */
 
-  flipCellsAround(coord) {
+  flipCellsAround = (coord) => {
     let {ncols, nrows} = this.props;
     let board = this.state.board;
     let [y, x] = coord.split("-").map(Number);
+    
 
 
     function flipCell(y, x) {
@@ -78,11 +77,19 @@ class Board extends Component {
     }
 
     // TODO: flip this cell and the cells around it
-
+    flipCell(y,x)
+    flipCell(y+1,x)
+    flipCell(y-1,x)
+    flipCell(y,x-1)
+    flipCell(y,x+1)
+  
     // win when every cell is turned off
     // TODO: determine is the game has been won
+    let isWinner = this.state.board
+    console.log(isWinner)
+    let hasWon = isWinner.flat(Infinity).includes(true) ? false : true
 
-    // this.setState({board, hasWon});
+    this.setState({board, hasWon});
   }
 
 
@@ -91,27 +98,17 @@ class Board extends Component {
   render() {
     const renderboard = () => {
       return this.state.board
-      .map((r, index1) =><tr key={index1}>{r
-        .map((c, index) =><Cell key={`${index1+'-'+index}`} isLit={c}/>)}</tr>)
+      .map((r, y) =><tr key={y}>
+        {r.map((c, x) =><Cell key={`${y+'-'+x}`} isLit={c}
+        flipCellsAroundMe={this.flipCellsAround} coord={`${y+'-'+x}`}/>)}</tr>)
     }
     console.log(renderboard())
+    console.log(this.state.hasWon)
       return (
-        
+        this.state.hasWon ? <h1>You Win!!</h1> : 
         <table className="Board">
         <tbody>
-            {
-              renderboard()
-            }
-          {/* <tr>
-            <Cell isLit={true}/>
-            <Cell isLit={false}/>
-            <Cell isLit={true}/>
-            </tr>
-            <tr>
-            <Cell isLit={true}/>
-            <Cell isLit={false}/>
-            <Cell isLit={true}/>
-          </tr> */}
+            {renderboard()}
         </tbody>
       </table>
     )
